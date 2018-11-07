@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.nouran.bakingapp">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".Activities.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Activities.DetailActivity"
+            android:label="Detail"
+            android:launchMode="singleTask"
+            android:parentActivityName=".Activities.MainActivity">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Activities.StepActivity"
+            android:label="Step"
+            android:parentActivityName=".Activities.DetailActivity">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activities.MainActivity" />
+        </activity>
+
+        <receiver android:name=".BakingAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/baking_app_widget_info" />
+        </receiver>
+
+    </application>
+
+</manifest>

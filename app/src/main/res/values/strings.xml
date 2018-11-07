@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BakingApp</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="nutella_pie">Nutella Pie</string>
+    <string name="added_to_widget">Add Widget</string>
+</resources>

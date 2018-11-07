@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FCE4EC"
+    android:orientation="vertical"
+    android:weightSum="10">
+
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6">
+
+    </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+
+    <TextView
+        android:id="@+id/v_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="7dp"
+        android:layout_weight="4"
+        android:textSize="17sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/Previous_btn"
+            android:background="@drawable/ic_keyboard_arrow_left_black_24dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/ic_navigate_next_black_24dp"
+            android:id="@+id/Next_btn"
+            android:onClick="nextStep"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

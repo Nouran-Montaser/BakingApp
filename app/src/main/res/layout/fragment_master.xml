@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFCCBC">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="7dp"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:cardBackgroundColor="#FBE9E7"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="8dp">
+
+            <TextView
+                android:id="@+id/detail_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:padding="10dp"
+                android:textColor="@color/cardview_dark_background"
+                android:textSize="15sp" />
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycleerr_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</ScrollView>
