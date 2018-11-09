@@ -1,7 +1,6 @@
 package com.example.nouran.bakingapp.Activities;
 
 
-import android.support.test.espresso.DataInteraction;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -9,15 +8,6 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onData;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.pressBack;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
-import static android.support.test.espresso.action.ViewActions.*;
-import static android.support.test.espresso.assertion.ViewAssertions.*;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
 
 import com.example.nouran.bakingapp.R;
 
@@ -29,9 +19,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -39,6 +33,40 @@ public class MainActivityTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+
+    @Test
+    public void mainActivityTest() {
+        ViewInteraction linearLayout = onView(
+                allOf(withId(R.id.main_layout_container),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.recycler_view),
+                                        1),
+                                0),
+                        isDisplayed()));
+        linearLayout.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(700);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.step_txt), withText("Recipe Introduction"),
+                        childAtPosition(
+                                allOf(withId(R.id.main_layout_container),
+                                        childAtPosition(
+                                                IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class),
+                                                0)),
+                                1),
+                        isDisplayed()));
+        textView.check(matches(withText("Recipe Introduction")));
+
+    }
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
@@ -58,27 +86,4 @@ public class MainActivityTest {
             }
         };
     }
-
-    @Test
-    public void mainActivityTest() {
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        ViewInteraction linearLayout = onView(
-                allOf(withId(R.id.main_layout_container),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.recycler_view),
-                                        0),
-                                0),
-                        isDisplayed()));
-        linearLayout.perform(click());
-
-    }
-
 }
