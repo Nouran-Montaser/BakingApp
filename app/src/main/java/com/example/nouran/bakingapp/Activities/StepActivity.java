@@ -15,7 +15,8 @@ public class StepActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.v_activity);
 
-        fragmentCode();
+        if (savedInstanceState == null)
+            fragmentCode();
     }
 
 

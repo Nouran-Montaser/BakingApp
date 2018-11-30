@@ -57,8 +57,8 @@ public class MasterFragment extends Fragment {
 
         textView = view.findViewById(R.id.detail_text_view);
         recyclerView = view.findViewById(R.id.recycleerr_view);
-        bakings = BakingWrapper.getInstance().getBakings();
-//        bakings=getArguments().getParcelable("lol");
+//        bakings = BakingWrapper.getInstance().getBakings();
+        bakings=getArguments().getParcelable("lol");
 
         myAdapter = new SAdapter(getContext(),bakings.getSteps(),mCallback);
         StringBuilder ingredients = new StringBuilder("");

@@ -25,34 +25,19 @@ public class DetailActivity extends AppCompatActivity implements OnStepClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
 
-
         if (findViewById(R.id.two_pane_liner_layout) != null) {
-            // This LinearLayout will only initially exist in the two-pane tablet case
             mTwoPane = true;
-
-            // Getting rid of the "Next" button that appears on phones for launching a separate activity
-
-
         } else {
-            // We're in single-pane mode and displaying fragments on a phone in separate activities
             mTwoPane = false;
         }
 
         initializer();
         if (savedInstanceState == null) {
-//            // In two-pane mode, add initial BodyPartFragments to the screen
             FragmentManager fragmentManager = getSupportFragmentManager();
-//
-//            // Creating a new head fragment
             MasterFragment masterFragment = new MasterFragment();
-////                masterFragment.setImageIds(AndroidImageAssets.getHeads());
-//            // Add the fragment to its container using a transaction
-//
-//            Bundle bundle=new Bundle();
-//            bundle.putParcelable("lol",getIntent().getParcelableExtra("ClickedItem"));
-//            masterFragment.setArguments(bundle);
-//
-//
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("lol", BakingWrapper.getInstance().getBakings());
+            masterFragment.setArguments(bundle);
             fragmentManager.beginTransaction()
                     .add(R.id.master_container, masterFragment)
                     .commit();

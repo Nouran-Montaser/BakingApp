@@ -50,7 +50,13 @@ public class StepDetailFragment extends Fragment {
     private Button prevBtn;
     private Button nextBtn;
     private Bakings bakings;
-
+    private TrackSelector trackSelector;
+    private BandwidthMeter bandwidthMeter;
+    private TrackSelection.Factory videoTrackSelectionFactory;
+    private LoadControl loadControl;
+    private DataSource.Factory dataSourceFactory;
+    private ExtractorsFactory extractorsFactory;
+    private MediaSource videoSource;
 
     public StepDetailFragment() {
     }
@@ -60,14 +66,15 @@ public class StepDetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, final @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
-
-        step = StepWrapper.getInstance().getSteps();
+        step = getArguments().getParcelable("lol");
+//        step = StepWrapper.getInstance().getSteps();
         textView = rootView.findViewById(R.id.v_text_view);
         mPlayerView = rootView.findViewById(R.id.video_view);
         prevBtn = rootView.findViewById(R.id.Previous_btn);
         nextBtn = rootView.findViewById(R.id.Next_btn);
 
         setBakingStep(step);
+        Log.i("lol2", "" + position);
 
         if (nextBtn != null) {
 
@@ -89,7 +96,6 @@ public class StepDetailFragment extends Fragment {
                         if (h == 1)
                             break;
                     }
-
                 }
             });
 
@@ -114,19 +120,17 @@ public class StepDetailFragment extends Fragment {
                 }
             });
         }
-        initializePlayer(Uri.parse(step.getVideoURL()));
+//        initializePlayer(Uri.parse(step.getVideoURL()));
 
         return rootView;
     }
 
     private void initializePlayer(Uri mediaUri) {
         // Create a default TrackSelector
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector =
-                new DefaultTrackSelector(videoTrackSelectionFactory);
-        LoadControl loadControl = new DefaultLoadControl();
+        bandwidthMeter = new DefaultBandwidthMeter();
+        videoTrackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
+        trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+        loadControl = new DefaultLoadControl();
 
         //Initialize the player
         mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
@@ -135,21 +139,18 @@ public class StepDetailFragment extends Fragment {
         mPlayerView.setPlayer(mExoPlayer);
 
         // Produces DataSource instances through which media data is loaded.
-        DataSource.Factory dataSourceFactory =
-                new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "BakingApp"));
+        dataSourceFactory = new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "BakingApp"));
 
         // Produces Extractor instances for parsing the media data.
-        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        extractorsFactory = new DefaultExtractorsFactory();
 
         // This is the MediaSource representing the media to be played.
-        MediaSource videoSource = new ExtractorMediaSource(mediaUri,
-                dataSourceFactory, extractorsFactory, null, new ExtractorMediaSource.EventListener() {
+        videoSource = new ExtractorMediaSource(mediaUri, dataSourceFactory, extractorsFactory, null, new ExtractorMediaSource.EventListener() {
             @Override
             public void onLoadError(IOException e) {
 
             }
         });
-
         // Prepare the player with the source.
         mExoPlayer.prepare(videoSource);
         mExoPlayer.setPlayWhenReady(true);
@@ -159,12 +160,16 @@ public class StepDetailFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
+        mExoPlayer.release();
+        mExoPlayer = null;
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong("SELECTED_POSITION", position);
+        outState.putParcelable("step",step);
+//        outState.putParcelable("stepObject",StepWrapper.getInstance().getSteps());
     }
 
     @Override
@@ -176,22 +181,42 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             position = savedInstanceState.getLong("SELECTED_POSITION", C.TIME_UNSET);
+            step = savedInstanceState.getParcelable("step");
+        }
         Log.i(TAG, "onRestoreInstanceState: " + position);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+//        if(Util.)
         if (mExoPlayer != null) {
             position = mExoPlayer.getCurrentPosition();
+            mExoPlayer.getPlayWhenReady();
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            initializePlayer(Uri.parse(step.getVideoURL()));
+            mExoPlayer.seekTo(position);
+            step = getArguments().getParcelable("lol");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Util.SDK_INT <= 23 || mPlayerView == null)
+            initializePlayer(Uri.parse(step.getVideoURL()));
+    }
+
+
     private void setBakingStep(Steps s) {
-
-
         if (s.getVideoURL() != null) {
             videoUri = Uri.parse(s.getVideoURL());
             initializePlayer(videoUri);
@@ -200,23 +225,21 @@ public class StepDetailFragment extends Fragment {
         if (position != C.TIME_UNSET) {
             Log.i(TAG, "onResponse:  enter");
             mExoPlayer.seekTo(position);
-
         }
         if (textView != null)
             textView.setText(s.getDescription());
-        if (getResources().getBoolean(R.bool.isTablet)) {
-            nextBtn.setVisibility(View.GONE);
-            prevBtn.setVisibility(View.GONE);
+        if (nextBtn != null && prevBtn != null) {
+            if (getResources().getBoolean(R.bool.isTablet)) {
+                nextBtn.setVisibility(View.GONE);
+                prevBtn.setVisibility(View.GONE);
+            }
         }
     }
-
 
     private void releasePlayer() {
         if (mExoPlayer != null) {
             position = mExoPlayer.getCurrentPosition();
             mExoPlayer.stop();
-            mExoPlayer.release();
-            mExoPlayer = null;
         }
     }
 
